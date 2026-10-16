@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRAFTPEDIA — энциклопедия Minecraft</title>
+<style>
+:root{--bg:#080d12;--panel:#101923;--panel2:#151f2b;--line:#263545;--text:#eef5fb;--muted:#a3b4c6;--green:#42f59b;--blue:#78baff}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;position:relative;isolation:isolate;overflow-x:hidden;background:radial-gradient(ellipse at 12% 5%,#143b2c 0%,transparent 34%),radial-gradient(ellipse at 88% 28%,#102b42 0%,transparent 30%),radial-gradient(ellipse at 50% -15%,#15392d 0%,var(--bg) 55%);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.24;background-image:linear-gradient(#8affc20b 1px,transparent 1px),linear-gradient(90deg,#8affc20b 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,#000,transparent 88%)}
+body::after{content:"";position:fixed;z-index:-1;pointer-events:none;width:48vw;height:48vw;left:-18vw;top:30vh;border-radius:50%;background:#20c8790b;filter:blur(30px);animation:ambientDrift 18s ease-in-out infinite alternate}
+.ambient-pixels{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}.ambient-pixels i{position:absolute;width:4px;height:4px;background:#62ffb5;opacity:0;border-radius:1px;box-shadow:0 0 12px #42f59b;animation:pixelFloat var(--duration,14s) linear infinite;animation-delay:var(--delay,0s)}
+@keyframes pixelFloat{0%{transform:translate3d(0,105vh,0) rotate(0);opacity:0}12%{opacity:.42}82%{opacity:.24}100%{transform:translate3d(var(--drift,35px),-10vh,0) rotate(180deg);opacity:0}}
+@keyframes ambientDrift{from{transform:translate3d(0,0,0) scale(.9)}to{transform:translate3d(28vw,-12vh,0) scale(1.18)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+header{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:16px clamp(18px,5vw,76px);background:#080d12eF;border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
+.brand{font-weight:950;letter-spacing:1.8px;font-size:21px}.brand span{color:var(--green)}
+nav{display:flex;gap:10px;flex-wrap:wrap}nav a{color:var(--muted);text-decoration:none;font-size:13px;padding:9px 12px;border:1px solid transparent;border-radius:10px}nav a:hover{color:white;border-color:var(--line);background:var(--panel)}
+.hero{padding:74px clamp(18px,8vw,128px) 42px;max-width:1500px;margin:auto}
+.eyebrow{color:var(--green);font-weight:800;font-size:12px;letter-spacing:2.5px;text-transform:uppercase}
+h1{font-size:clamp(38px,6vw,72px);line-height:1.03;letter-spacing:-2px;margin:18px 0 18px;max-width:850px}
+.hero p{max-width:680px;color:var(--muted);font-size:17px;line-height:1.8}
+.search-wrap{display:flex;gap:10px;max-width:780px;margin-top:26px}
+input[type=search]{width:100%;background:var(--panel2);border:1px solid #344659;border-radius:13px;padding:16px;color:white;font-size:15px;outline:none}
+input:focus{border-color:var(--green);box-shadow:0 0 0 3px #42f59b18}
+main{max-width:1500px;margin:auto;padding:12px clamp(18px,5vw,76px) 70px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:28px 0 18px}
+h2{font-size:25px;margin:0 0 8px}.sub{color:var(--muted);font-size:14px;line-height:1.6}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 24px}
+.filter{border:1px solid var(--line);background:#0c131b;color:var(--muted);padding:9px 13px;border-radius:999px;cursor:pointer;font-size:13px}
+.filter.active,.filter:hover{background:#123326;border-color:#287d57;color:var(--green);box-shadow:0 0 18px #42f59b10;transform:translateY(-1px)}.filter{transition:background .2s,border-color .2s,color .2s,transform .2s}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card{background:linear-gradient(160deg,#121d28eF,#0d141cf7);border:1px solid var(--line);border-radius:17px;overflow:hidden;cursor:pointer;transition:transform .28s cubic-bezier(.2,.8,.2,1),border-color .28s,box-shadow .28s;min-width:0;animation:riseIn .45s both;position:relative}
+.card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;background:linear-gradient(125deg,transparent 20%,#42f59b0d 50%,transparent 80%);transition:opacity .3s}
+.card:hover{transform:translateY(-7px) scale(1.012);border-color:#42f59bcc;box-shadow:0 14px 34px #0005,0 0 22px #42f59b12}.card:hover::after{opacity:1}
+.card:nth-child(4n+2){animation-delay:.04s}.card:nth-child(4n+3){animation-delay:.08s}.card:nth-child(4n+4){animation-delay:.12s}
+.card-img{height:170px;background:radial-gradient(ellipse at 50% 60%,#21463866,transparent 65%),linear-gradient(135deg,#1a2937,#0d141c);display:flex;align-items:center;justify-content:center;padding:18px;border-bottom:1px solid #24313f;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 10px 16px #0008);transition:transform .35s,filter .35s}.card:hover .card-img img{transform:scale(1.09);filter:drop-shadow(0 12px 18px #42f59b25)}
+.card-img img.fallback-img{image-rendering:auto;filter:none;opacity:.9}
+.card-body{padding:16px}.pill{display:inline-block;font-size:10px;letter-spacing:1px;color:var(--green);font-weight:800;text-transform:uppercase;margin-bottom:8px}
+.card h3{margin:0 0 9px;font-size:17px}.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.65}
+.empty{display:none;color:var(--muted);padding:30px;border:1px dashed var(--line);border-radius:14px;text-align:center}
+.feature{margin-top:48px;background:linear-gradient(130deg,#10281feF,#101923eF 70%);border:1px solid #24533f;border-radius:20px;padding:25px;box-shadow:0 18px 50px #0002;position:relative;overflow:hidden}.feature::before{content:"";position:absolute;width:180px;height:180px;right:-60px;top:-70px;border:1px solid #42f59b24;transform:rotate(35deg);box-shadow:0 0 0 22px #42f59b05,0 0 0 44px #42f59b04;pointer-events:none}
+.feature h2{margin-bottom:12px}.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.feature-item{background:#09120f99;border:1px solid #29483b;border-radius:13px;padding:16px;color:var(--muted);line-height:1.7;font-size:14px}.feature-item b{color:white;display:block;margin-bottom:5px}
+.quiz{margin-top:48px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,4vw,32px)}
+.quiz-top{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}
+.progress{height:6px;background:#263443;border-radius:10px;overflow:hidden;margin:18px 0 24px}.progress div{height:100%;width:0;background:var(--green);transition:width .2s}
+#question{font-size:21px;line-height:1.5;margin:10px 0 20px}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.answer{background:#0b131c;color:var(--text);border:1px solid #2b3b4c;border-radius:12px;padding:14px;text-align:left;cursor:pointer;font-size:14px}
+.answer:hover:not(:disabled){border-color:var(--green);background:#12271f}.answer:disabled{cursor:default}.answer.correct{border-color:#3de18b;background:#123526}.answer.wrong{border-color:#ff7070;background:#351919}
+.btn{border:1px solid #3b8c68;background:linear-gradient(135deg,#164b34,#123b2b);color:#eafff3;padding:11px 16px;border-radius:11px;cursor:pointer;font-weight:750;transition:transform .2s,box-shadow .2s,background .2s}.btn:hover{background:#1d6746;transform:translateY(-2px);box-shadow:0 7px 22px #42f59b20}.btn:active{transform:translateY(0) scale(.98)}
+.btn.secondary{background:#111c27;border-color:var(--line);color:var(--muted)}
+#feedback{min-height:28px;color:var(--muted);font-size:14px;margin-top:15px;line-height:1.6}
+footer{border-top:1px solid var(--line);padding:28px clamp(18px,8vw,128px);color:var(--muted);font-size:12px;line-height:1.7}
+.modal{position:fixed;inset:0;z-index:50;background:#000b;display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(7px)}.modal.open{display:flex;animation:fadeBackdrop .18s ease-out}
+@keyframes fadeBackdrop{from{opacity:0}to{opacity:1}}
+.modal-box{width:min(760px,100%);max-height:90vh;overflow:auto;background:linear-gradient(150deg,#13202b,#0c131b);border:1px solid #42f59b50;border-radius:20px;box-shadow:0 25px 80px #000b,0 0 30px #42f59b0b;animation:riseIn .24s ease-out}
+.modal-hero{height:230px;background:radial-gradient(ellipse at center,#21463870,transparent 70%),linear-gradient(135deg,#1a2c3b,#0b1118);display:flex;align-items:center;justify-content:center;padding:20px}.modal-hero img{height:100%;max-width:100%;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 12px 20px #0009)}
+.modal-content{padding:24px}.modal-content h2{font-size:28px}.modal-content p,.modal-content li{color:var(--muted);line-height:1.8}.modal-content ul{padding-left:22px}
+.close{float:right;background:#1c2936;border:1px solid var(--line);color:white;border-radius:10px;padding:8px 12px;cursor:pointer}
+@media(max-width:1050px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){header{align-items:flex-start;flex-direction:column}.hero{padding-top:48px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.feature-grid{grid-template-columns:1fr}.card-img{height:140px}}
+@media(max-width:470px){.grid{grid-template-columns:1fr}.card-img{height:180px}.answers{grid-template-columns:1fr}h1{letter-spacing:-1px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}.ambient-pixels{display:none}}
+#allBlocks .card{cursor:pointer}#allBlocks .card-img{height:118px}#allBlocks .card-img img{image-rendering:pixelated}#allBlocks .block-id{font-size:11px;color:#7f95a9;margin-top:8px;overflow-wrap:anywhere}#blockStatus a{color:var(--green)}
+
+#bosses .card-img img{image-rendering:pixelated;object-fit:contain}
+.quiz-hub{margin-top:48px}.quiz-hub .quiz-tile{border:1px solid var(--border,rgba(255,255,255,.12));border-radius:18px;padding:20px;background:rgba(15,25,35,.76);transition:transform .25s,border-color .25s,box-shadow .25s;cursor:pointer}.quiz-hub .quiz-tile:hover{transform:translateY(-5px);border-color:#54e39b;box-shadow:0 12px 36px #0005}.quiz-tile h3{margin:8px 0}.quiz-tile p{color:var(--muted,#9eafbf)}.quiz-tile button{margin-top:10px}
+
+</style>
+</head>
+<body>
+<div class="ambient-pixels" id="ambientPixels" aria-hidden="true"></div>
+<header>
+  <div class="brand">CRAFT<span>PEDIA</span></div>
+  <nav><a href="#catalog">Каталог</a><a href="#redstone">Редстоун</a><a href="#quizHub">Тесты</a></nav>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Твоя база знаний Minecraft</div>
+  <h1>Мир Minecraft.<br>Без секретов.</h1>
+  <p>Изучай мобов, блоки, биомы и механизмы. Ищи полезные советы, открывай карточки энциклопедии и проверь, насколько хорошо ты знаешь игру.</p>
+  <div class="search-wrap"><input id="search" type="search" placeholder="🔎 Найти моба, блок, биом или механизм..."></div>
+</section>
+
+<main>
+  <section id="catalog">
+    <div class="section-head"><div><h2>Исследуй каталог</h2><div class="sub">Выбирай тему или ищи по названию. Нажми на карточку, чтобы открыть подробности.</div></div></div>
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+    <div class="empty" id="empty">Ничего не найдено. Попробуй другой запрос.</div>
+  </section>
+
+
+  <section id="bosses" style="margin-top:48px">
+    <div class="section-head">
+      <div><h2>🐉 Боссы и опасные мобы</h2><div class="sub">Кто встречается в выживании, чем опасен и как подготовиться.</div></div>
+    </div>
+    <div class="grid" id="bossGrid"></div>
+  </section>
+
+
+  <section class="quiz-hub" id="quizHub">
+    <div class="section-head"><div><h2>🧠 Испытай себя</h2><div class="sub">Отдельные тесты по разным темам и большой смешанный тест.</div></div></div>
+    <div class="grid" id="quizTiles">
+      <article class="quiz-tile" data-quiz="pvp"><div class="pill">⚔️ Бой</div><h3>PvP и тактика</h3><p>Дистанция, щиты, критические удары и выбор снаряжения.</p><a class="btn" href="test.html?topic=pvp" style="display:inline-block;text-decoration:none;margin-top:10px">Начать тест</a></article>
+      <article class="quiz-tile" data-quiz="build"><div class="pill">🏗️ Строительство</div><h3>Строительство</h3><p>Материалы, палитры, глубина фасадов и композиция.</p><a class="btn" href="test.html?topic=build" style="display:inline-block;text-decoration:none;margin-top:10px">Начать тест</a></article>
+      <article class="quiz-tile" data-quiz="redstone"><div class="pill">🔴 Механизмы</div><h3>Редстоун</h3><p>Повторители, компараторы, поршни и логика сигналов.</p><a class="btn" href="test.html?topic=redstone" style="display:inline-block;text-decoration:none;margin-top:10px">Начать тест</a></article>
+      <article class="quiz-tile" data-quiz="knowledge"><div class="pill">📚 Основы</div><h3>Знание Minecraft</h3><p>Рецепты, измерения, измерения мира и игровые механики.</p><a class="btn" href="test.html?topic=knowledge" style="display:inline-block;text-decoration:none;margin-top:10px">Начать тест</a></article>
+      <article class="quiz-tile" data-quiz="bosses"><div class="pill">🐲 Мобы</div><h3>Боссы и мобы</h3><p>Дракон Края, Иссушитель, Варден и опасные противники.</p><a class="btn" href="test.html?topic=bosses" style="display:inline-block;text-decoration:none;margin-top:10px">Начать тест</a></article>
+      <article class="quiz-tile" data-quiz="mixed"><div class="pill">🌌 Всё сразу</div><h3>Мастер Minecraft</h3><p>Смешанный челлендж из разных тем — проверь, насколько ты шаришь.</p><a class="btn" href="test.html?topic=mixed" style="display:inline-block;text-decoration:none;margin-top:10px">Начать тест</a></article>
+    </div>
+    <div id="quizPlay" class="card" style="display:none;margin-top:20px;padding:22px"></div>
+  </section>
+
+  <section id="allBlocks" style="margin-top:48px">
+    <div class="section-head">
+      <div><h2>🧱 Полный каталог блоков Minecraft</h2><div class="sub">Загружаем список блоков из Minecraft Wiki. Можно искать по названию и открыть страницу блока с подробностями.</div></div>
+      <div class="sub" id="blockCount" aria-live="polite">Подключаем каталог…</div>
+    </div>
+    <div class="search-wrap" style="margin:0 0 20px;max-width:100%">
+      <input id="blockSearch" type="search" placeholder="🔎 Поиск среди всех блоков: алмаз, дуб, редстоун…">
+    </div>
+    <div class="grid" id="allBlocksGrid"></div>
+    <div class="empty" id="blocksEmpty">Не нашёл такой блок. Попробуй другое название.</div>
+    <p class="sub" id="blockStatus" style="margin-top:16px">Каталог использует Minecraft Wiki; для загрузки списка и картинок нужен интернет.</p>
+  </section>
+
+  <section class="feature" id="redstone">
+    <h2>⚙️ Редстоун: короткая шпаргалка</h2>
+    <div class="feature-grid">
+      <div class="feature-item"><b>Сила сигнала</b>Редстоун-сигнал имеет уровни от 0 до 15. Пыль передаёт сигнал, а повторитель может восстановить его до полной силы.</div>
+      <div class="feature-item"><b>Повторитель</b>Повторитель обновляет сигнал, задаёт задержку и не даёт сигналу идти обратно. Задержку можно менять правым кликом.</div>
+      <div class="feature-item"><b>Компаратор</b>Компаратор сравнивает сигналы и может считывать заполненность контейнеров: сундуков, воронок и печей.</div>
+      <div class="feature-item"><b>Наблюдатель</b>Наблюдатель замечает обновление блока перед собой и выдаёт короткий импульс. Полезен для автоматических ферм.</div>
+      <div class="feature-item"><b>Липкий поршень</b>Обычный поршень толкает блоки, а липкий ещё и притягивает блок обратно при отключении сигнала.</div>
+      <div class="feature-item"><b>Секретная дверь</b>Для простой скрытой двери используй поршни, редстоун-пыль, повторители и рычаг. Сначала собери механизм в творческом режиме.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>CRAFTPEDIA · Фанатский справочник Minecraft. Неофициальный проект, не связанный с Mojang или Microsoft. Изображения загружаются из открытых источников; для загрузки картинок нужен интернет.</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-box"><div class="modal-hero"><img id="modalImg" alt=""></div><div class="modal-content"><button class="close" id="closeModal">Закрыть ✕</button><div class="pill" id="modalCategory"></div><h2 id="modalTitle"></h2><p id="modalDesc"></p><h3>Полезно знать</h3><ul id="modalFacts"></ul></div></div>
+</div>
+
+<script>
+// Иконки берём из спрайтов Minecraft Wiki: эти файлы предназначены именно для блоков и мобов.
+const slug = name => name.replace(/\.png$/i, "").toLowerCase().replace(/_/g, "-").replace(/\s+/g, "-");
+const blockImg = name => `https://minecraft.wiki/images/BlockSprite_${slug(name)}.png`;
+const mobImg = name => `https://minecraft.wiki/images/EntitySprite_${slug(name)}.png`;
+function fallbackImage(title, category){
+  const palettes={"Мобы":["#3b5c78","#17283b"],"Животные":["#477a55","#1b3026"],"Редстоун":["#b83c42","#391c25"],"Руды":["#548cae","#1a293b"],"Блоки":["#72806c","#202b28"]};
+  const colors=palettes[category]||["#42a879","#172b2a"];
+  const safe=String(title).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><defs><linearGradient id="g" x2="1" y2="1"><stop stop-color="${colors[0]}"/><stop offset="1" stop-color="${colors[1]}"/></linearGradient></defs><rect width="320" height="200" rx="18" fill="url(#g)"/><g opacity=".35" fill="#fff"><rect x="30" y="28" width="22" height="22"/><rect x="266" y="42" width="12" height="12"/><rect x="250" y="142" width="20" height="20"/><rect x="70" y="142" width="10" height="10"/></g><path d="M110 65h100v70H110z" fill="#07110f" opacity=".45"/><path d="M122 77h76v46h-76z" fill="#c7f7dc" opacity=".78"/><text x="160" y="169" font-family="Arial,sans-serif" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">${safe}</text></svg>`;
+  return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
+}
+function setImage(img, article){
+  img.alt=article.title;
+  img.onerror=()=>{img.onerror=null;img.src=fallbackImage(article.title,article.category);img.classList.add("fallback-img");};
+  img.src=article.image;
+}
+// Ненавязчивые пиксели на фоне; при системном reduced-motion анимация отключается CSS.
+const pixelLayer=document.getElementById("ambientPixels");
+for(let i=0;i<26;i++){const pixel=document.createElement("i");pixel.style.left=(Math.random()*100)+"%";pixel.style.setProperty("--duration",(11+Math.random()*17)+"s");pixel.style.setProperty("--delay",(-Math.random()*24)+"s");pixel.style.setProperty("--drift",(-55+Math.random()*110)+"px");pixel.style.width=pixel.style.height=(2+Math.random()*3)+"px";pixelLayer.appendChild(pixel);}
+const articles = [
+{title:"Редстоун-пыль",category:"Редстоун",image:blockImg("redstone_dust_dot"),desc:"Проводит редстоун-сигнал между механизмами.",facts:["Сила сигнала постепенно уменьшается по мере передачи по пыли.","Пыль можно прокладывать по полу и некоторым блокам.","Используется в дверях, ловушках, фермах и логических схемах."]},
+{title:"Повторитель",category:"Редстоун",image:"https://minecraft.wiki/images/BlockSprite_redstone-repeater.png",desc:"Продлевает сигнал, добавляет задержку и задаёт направление передачи.",facts:["Задержка переключается правым кликом.","Повторитель передаёт сигнал только вперёд.","Можно использовать для создания таймеров и мигающих схем."]},
+{title:"Компаратор",category:"Редстоун",image:"https://minecraft.wiki/images/BlockSprite_redstone-comparator.png",desc:"Сравнивает силу двух сигналов или работает в режиме вычитания.",facts:["Может считывать заполненность сундука, бочки, печи и других контейнеров.","Передний факел меняет режим работы.","Нужен для сортировщиков предметов и систем измерения."]},
+{title:"Поршень",category:"Редстоун",image:blockImg("piston"),desc:"При получении сигнала выдвигает головку и толкает блоки.",facts:["Не все блоки можно сдвинуть поршнем.","Обычный поршень не удерживает блок при обратном движении.","Используется в дверях, мостах и скрытых проходах."]},
+{title:"Липкий поршень",category:"Редстоун",image:blockImg("sticky_piston"),desc:"Толкает блоки и обычно притягивает один блок обратно.",facts:["Создаётся из поршня и слизневого шара.","Полезен для компактных дверей и лифтов.","Схема зависит от версии игры и расположения соседних блоков."]},
+{title:"Наблюдатель",category:"Редстоун",image:blockImg("observer"),desc:"Реагирует на обновление блока перед своим лицом и выдаёт импульс.",facts:["Лицо наблюдателя смотрит на блок, за которым он следит.","Выход сигнала расположен с противоположной стороны.","Часто используется в автоматических фермах и генераторах импульсов."]},
+{title:"Редстоун-факел",category:"Редстоун",image:blockImg("redstone_torch"),desc:"Источник сигнала и важная деталь логических схем.",facts:["Может инвертировать сигнал при установке на блок.","При слишком частом переключении способен отключаться на короткое время.","Используется в простых логических элементах."]},
+{title:"Сундук",category:"Блоки",image:blockImg("chest"),desc:"Контейнер для хранения предметов.",facts:["Два соседних обычных сундука могут объединиться в большой.","Некоторые блоки над сундуком мешают его открытию.","Компаратор может определить степень заполненности."]},
+{title:"Бочка",category:"Блоки",image:blockImg("barrel"),desc:"Контейнер, который удобно использовать в тесных складах.",facts:["Бочку можно открыть даже если над ней находится полный блок.","Её можно изготовить из досок и деревянных плит.","Жители-рыбаки могут связывать с бочкой свою профессию."]},
+{title:"Алмазная руда",category:"Руды",image:blockImg("diamond_ore"),desc:"Источник алмазов — одного из ценных ресурсов для снаряжения.",facts:["Высота появления зависит от версии и генерации мира.","Кирка должна быть подходящего уровня, иначе руда не даст ресурс.","На глубине следи за лавой и используй факелы."]},
+{title:"Древние обломки",category:"Руды",image:blockImg("ancient_debris"),desc:"Редкая руда Незера, из которой получают незеритовый лом.",facts:["Чаще встречается глубоко в Незере.","Взрывы не уничтожают древние обломки.","Для превращения в незеритовый слиток нужны дополнительные материалы."]},
+{title:"Алмазный блок",category:"Блоки",image:"https://minecraft.wiki/images/BlockSprite_diamond-block.png",desc:"Декоративный и компактный способ хранить алмазы.",facts:["Создаётся из девяти алмазов.","Можно снова разобрать на отдельные алмазы.","Используется в маяках как один из подходящих блоков основания."]},
+{title:"Дубовые доски",category:"Дерево",image:blockImg("oak_planks"),desc:"Один из основных строительных материалов в игре.",facts:["Получаются из дубовых брёвен.","Из досок создаются верстаки, палки, двери, плиты и множество других предметов.","У разных пород дерева свой цвет, но базовые рецепты похожи."]},
+{title:"Берёзовые доски",category:"Дерево",image:blockImg("birch_planks"),desc:"Светлые доски для интерьеров и построек.",facts:["Получаются из берёзовых брёвен.","Разные породы досок обычно нельзя смешивать в одном рецепте двери или забора.","Хорошо сочетаются с тёмным дубом и камнем."]},
+{title:"Камень",category:"Блоки",image:blockImg("stone"),desc:"Базовый блок подземелий и строительства.",facts:["Обычная кирка добывает камень как булыжник, если не использовать подходящее зачарование.","Переплавка булыжника даёт камень.","Камень служит основой для многих строительных рецептов."]},
+{title:"Булыжник",category:"Блоки",image:blockImg("cobblestone"),desc:"Надёжный блок, который легко добывать в начале игры.",facts:["Добывается при разрушении камня обычной киркой.","Используется для печи, инструментов и множества рецептов.","Водопад и лава могут образовывать генератор булыжника."]},
+{title:"Песок",category:"Блоки",image:blockImg("sand"),desc:"Сыпучий блок пустынь и пляжей.",facts:["Падает вниз, если под ним нет опоры.","Переплавляется в стекло.","Красный песок встречается в биоме бесплодных земель."]},
+{title:"Стекло",category:"Блоки",image:blockImg("glass"),desc:"Прозрачный строительный блок для окон и теплиц.",facts:["Получается переплавкой песка.","Обычно не выпадает при добыче без подходящего зачарования.","Стеклянные панели позволяют делать тонкие окна."]},
+{title:"Обсидиан",category:"Блоки",image:blockImg("obsidian"),desc:"Очень прочный блок, важный для портала в Незер.",facts:["Образуется, когда вода превращает источник лавы в обсидиан.","Добывается алмазной или незеритовой киркой.","Рамка портала в Незер требует минимум десять блоков обсидиана."]},
+{title:"Трава",category:"Блоки",image:blockImg("grass_block"),desc:"Распространённый верхний слой земли в большинстве зелёных биомов.",facts:["На подходящих условиях трава распространяется на соседнюю землю.","На траве могут появляться растения и цветы.","Снег и другие блоки меняют внешний вид поверхности."]},
+{title:"Песчаник",category:"Блоки",image:blockImg("sandstone"),desc:"Строительный блок, естественно встречающийся под песком.",facts:["Есть несколько вариантов: обычный, резной и гладкий.","Подходит для пустынных построек и храмов.","Красный песчаник создаётся из красного песка."]},
+{title:"Печь",category:"Блоки",image:blockImg("furnace"),desc:"Переплавляет руды и готовит пищу, используя топливо.",facts:["Топливо кладётся в нижний слот, предмет для обработки — в верхний.","Взрывная печь быстрее переплавляет руды и металлическое снаряжение.","Коптильня быстрее готовит еду."]},
+{title:"Верстак",category:"Блоки",image:blockImg("crafting_table"),desc:"Открывает сетку крафта 3×3 для большинства рецептов.",facts:["Создаётся из четырёх досок.","Многие инструменты и механизмы требуют сетку 3×3.","Верстак — один из первых полезных блоков в выживании."]},
+{title:"Крипер",category:"Мобы",image:mobImg("Creeper.png"),desc:"Тихо подкрадывается к игроку и взрывается рядом.",facts:["Держи дистанцию, если услышал шипение.","Щит может помочь пережить взрыв при правильном направлении.","Заряженный крипер появляется, когда обычного поражает молния."]},
+{title:"Зомби",category:"Мобы",image:mobImg("Zombie.png"),desc:"Обычный враждебный моб, который появляется в темноте.",facts:["Горит на солнце, если не защищён от него.","Некоторые зомби могут подбирать предметы и снаряжение.","Зомби-житель может быть вылечен с помощью нужных эффектов и золотого яблока."]},
+{title:"Скелет",category:"Мобы",image:mobImg("Skeleton.png"),desc:"Стреляет из лука и опасен на открытой местности.",facts:["Двигайся зигзагом, чтобы усложнить попадание стрел.","Скелеты горят на солнце.","Скелеты могут сражаться с другими мобами, если случайно попадут в них."]},
+{title:"Эндермен",category:"Мобы",image:mobImg("Enderman.png"),desc:"Высокий нейтральный моб, способный телепортироваться.",facts:["Не смотри ему прямо в глаза, если не хочешь спровоцировать атаку.","Вода наносит эндермену урон.","Из него может выпасть жемчуг Края."]},
+{title:"Паук",category:"Мобы",image:mobImg("Spider.png"),desc:"Быстрый моб, который способен карабкаться по стенам.",facts:["При хорошем освещении обычные пауки обычно нейтральны.","Паутина замедляет передвижение.","С пауков выпадают нити и иногда глаза паука."]},
+{title:"Корова",category:"Животные",image:mobImg("Cow.png"),desc:"Пассивное животное, дающее кожу и говядину.",facts:["Коров можно разводить пшеницей.","Ведро позволяет получить молоко.","Молоко снимает большинство эффектов зелий."]},
+{title:"Овца",category:"Животные",image:mobImg("Sheep.png"),desc:"Пассивное животное — важный источник шерсти.",facts:["Шерсть можно получить ножницами.","Овцы размножаются пшеницей.","Цвет шерсти зависит от окраса; овцу можно покрасить красителем."]},
+{title:"Свинья",category:"Животные",image:mobImg("Pig.png"),desc:"Пассивное животное, которое даёт свинину.",facts:["Свиней можно разводить морковью, картофелем или свёклой.","На свинье можно ездить с седлом и удочкой с морковью.","Сырая свинина восстанавливает меньше сытости, чем приготовленная."]},
+{title:"Курица",category:"Животные",image:mobImg("Chicken.png"),desc:"Небольшая птица, дающая яйца, перья и курятину.",facts:["Курицы периодически несут яйца.","Для размножения подходят семена.","Курица медленно падает и не получает обычный урон от падения."]},
+{title:"Волк",category:"Животные",image:mobImg("Wolf.png"),desc:"Волка можно приручить и взять с собой в приключения.",facts:["Для приручения используются кости.","Приручённый волк помогает сражаться с враждебными мобами.","Внешность волков зависит от биома и варианта."]},
+{title:"Кошка",category:"Животные",image:mobImg("Cat.png"),desc:"Пугливое животное, которое можно приручить рыбой.",facts:["Кошки отпугивают криперов и фантомов.","Для приручения подойдут сырая треска или лосось.","Приручённые кошки иногда приносят игроку подарки утром."]},
+{title:"Лиса",category:"Животные",image:mobImg("Fox.png"),desc:"Лесное животное, которое может подбирать предметы ртом.",facts:["Лисы встречаются в тайге и некоторых холодных биомах.","Они могут держать еду и другие предметы.","Разведение двух лис создаёт лисят, которые доверяют игроку."]},
+{title:"Аксолотль",category:"Животные",image:mobImg("Axolotl.png"),desc:"Водный моб, который помогает сражаться с некоторыми подводными врагами.",facts:["Встречается в пышных пещерах в воде.","Разводится тропической рыбой в ведре.","Может притворяться мёртвым после получения урона."]},
+{title:"Пчела",category:"Животные",image:mobImg("Bee.png"),desc:"Собирает пыльцу с цветов и помогает опылять урожай.",facts:["Пчёлы возвращаются в гнездо или улей.","Костёр под гнездом помогает безопасно собирать мёд.","Укусы пчёл могут отравить игрока."]},
+{title:"Лошадь",category:"Животные",image:"https://minecraft.wiki/images/EntitySprite_horse.png",desc:"Позволяет быстрее путешествовать по суше.",facts:["Лошадь нужно приручить, забираясь на неё.","Седло позволяет управлять движением.","У лошадей различаются скорость, высота прыжка и здоровье."]},
+{title:"Дельфин",category:"Животные",image:mobImg("Dolphin.png"),desc:"Морской моб, который может ускорить игрока в воде.",facts:["Дельфины могут подплывать к игроку и играть с предметами.","Если покормить дельфина сырой рыбой, он может привести к затонувшим сокровищам.","Дельфинам нужно оставаться в воде."]},
+{title:"Черепаха",category:"Животные",image:mobImg("Turtle.png"),desc:"Медленный морской обитатель, откладывающий яйца на пляже.",facts:["Черепахи откладывают яйца на песке.","Из яиц вылупляются детёныши.","Щитки детёнышей нужны для создания панциря черепахи."]},
+{title:"Аксолотль и морские тайны",category:"Секреты",image:mobImg("Axolotl.png"),desc:"Подводные приключения скрывают полезные механики и редкие места.",facts:["Ищи пышные пещеры под поверхностью.","Подводные руины и кораблекрушения могут содержать добычу.","Возьми двери или зелье водного дыхания, чтобы дольше исследовать глубины."]},
+{title:"Грибные поля",category:"Биомы",image:mobImg("Mooshroom.png"),desc:"Редкий биом с грибными коровами и необычным ландшафтом.",facts:["Часто встречается в виде островов в океане.","Здесь живут грибные коровы — муушрумы.","На этом биоме обычно не появляются обычные враждебные мобы естественным образом."]},
+{title:"Пустыня",category:"Биомы",image:blockImg("sand"),desc:"Жаркий биом с песком, кактусами и иногда пустынными храмами.",facts:["Ищи деревни, колодцы и храмы.","В храме будь осторожен с нажимной плитой и ловушкой под ней.","Пустынные колодцы не гарантируют редкую добычу."]},
+{title:"Незер",category:"Измерения",image:blockImg("netherrack"),desc:"Опасное измерение с лавовыми морями, крепостями и уникальными ресурсами.",facts:["Возьми золотую броню или хотя бы одну золотую часть, чтобы пиглины не атаковали без причины.","Координаты в Незере помогают быстрее перемещаться между точками Верхнего мира.","Кровать в Незере взрывается при попытке поспать."]},
+{title:"Край",category:"Измерения",image:blockImg("end_stone"),desc:"Измерение с эндер-драконом, островами и городами Края.",facts:["Для входа нужен портал Края.","После победы над драконом можно исследовать внешние острова.","В городах Края можно найти элитры и шалкеровые ящики."]},
+{title:"Верстак и крафт",category:"Советы",image:blockImg("crafting_table"),desc:"Понимание рецептов помогает быстрее развиваться в выживании.",facts:["Положи рецепт в сетку верстака по правильному шаблону.","Книга рецептов показывает доступные рецепты.","Некоторые рецепты отличаются в зависимости от версии Minecraft."]},
+{title:"Маяк",category:"Блоки",image:blockImg("beacon"),desc:"Мощный блок, который даёт игрокам эффекты в пределах своей области.",facts:["Для активации нужна пирамида из подходящих блоков.","Луч может проходить через прозрачные блоки, например стекло.","Чем выше пирамида, тем больше уровней эффектов доступно."]},
+{title:"Золотая руда",category:"Руды",image:blockImg("gold_ore"),desc:"Руда для инструментов, еды, торговли и механизмов.",facts:["Золото встречается в обычном мире и в Незере в разных формах.","Золотые слитки используются для золотых яблок и многих рецептов.","Пиглины проявляют интерес к золотым предметам."]},
+{title:"Угольная руда",category:"Руды",image:blockImg("coal_ore"),desc:"Один из главных ранних источников топлива.",facts:["Уголь используется для факелов и переплавки.","Угольную руду можно найти в каменных слоях мира.","Древесный уголь получают из брёвен в печи."]},
+{title:"Медная руда",category:"Руды",image:blockImg("copper_ore"),desc:"Источник меди, применяемой в строительстве и некоторых полезных предметах.",facts:["Медные блоки со временем окисляются и меняют цвет.","Воск помогает сохранить текущую стадию окисления.","Медь используется в молниеотводах и подзорных трубах."]},
+{title:"Изумрудная руда",category:"Руды",image:blockImg("emerald_ore"),desc:"Редкая руда горных биомов, связанная с изумрудами.",facts:["Изумруды особенно полезны для торговли с жителями.","Руда встречается в горных биомах.","Торговля часто становится удобнее, чем добыча изумрудной руды."]},
+{title:"Булыжниковая стена",category:"Блоки",image:blockImg("cobblestone"),desc:"Простая защита для базы и удобный декоративный элемент.",facts:["Стены подходят для ограждений и средневековых построек.","Существуют варианты из многих каменных материалов.","Сочетай стены с фонарями и плитами для выразительного фасада."]},
+{title:"Бамбук",category:"Растения",image:"https://minecraft.wiki/images/BlockSprite_bamboo.png",desc:"Быстрорастущее растение, полезное для строительства и крафта.",facts:["Бамбук можно использовать как топливо.","Из бамбука создают особый набор строительных блоков.","Панды любят бамбук."]},
+{title:"Как пережить первую ночь",category:"Советы",image:blockImg("torch"),desc:"Базовый план для безопасного старта в режиме выживания.",facts:["Собери дерево, сделай верстак и деревянную кирку.","Добудь камень, сделай каменные инструменты и печь.","Найди уголь или сделай древесный уголь, поставь факелы и укрытие."]},
+{title:"Факел",category:"Блоки",image:blockImg("torch"),desc:"Освещает пещеры, базы и дороги.",facts:["Создаётся из палки и угля или древесного угля.","Освещение помогает контролировать появление враждебных мобов.","Факелы удобно ставить с одной стороны тоннеля, чтобы отмечать путь домой."]},
+{title:"Зачарования",category:"Советы",image:blockImg("enchanting_table"),desc:"Улучшают инструменты, оружие, броню и другие предметы.",facts:["Стол зачарований использует лазурит и уровни опыта.","Книжные полки рядом со столом открывают более сильные варианты.","Наковальня помогает объединять зачарования и переименовывать предметы."]},
+{title:"Зелья",category:"Советы",image:blockImg("brewing_stand"),desc:"Зельеварение даёт временные эффекты для исследования и боя.",facts:["Для варки обычно нужны стойка зельеварения и огненный порошок.","Незерский нарост — основа для многих базовых зелий.","Порох превращает обычное зелье в взрывное."]},
+{title:"Деревня",category:"Структуры",image:blockImg("oak_planks"),desc:"Поселение жителей, где можно найти кровати, рабочие места и торговлю.",facts:["Защищай жителей от зомби и других угроз.","Рабочие блоки позволяют жителям выбирать профессию.","Торговля — один из надёжных способов получить редкие предметы."]},
+{title:"Пустынный храм",category:"Структуры",image:blockImg("sandstone"),desc:"Структура с сокровищницей, спрятанной под центральной частью.",facts:["Под центральным узором находится ловушка с нажимной плитой.","Не падай прямо на плиту в центре нижней комнаты.","Сначала обезвреди ловушку, затем забирай добычу из сундуков."]},
+{title:"Кораблекрушение",category:"Структуры",image:blockImg("oak_planks"),desc:"Остатки корабля под водой или на берегу с сундуками.",facts:["Внутри могут быть карты сокровищ, еда и материалы.","Части корабля иногда отсутствуют.","Возьми запас воздуха и следи за утопленниками."]},
+{title:"Лама",category:"Животные",image:"https://minecraft.wiki/images/EntitySprite_llama.png",desc:"Животное, которое можно приручить и использовать для перевозки предметов.",facts:["На ламу можно повесить сундук.","Ламы плюются, если их разозлить.","Караван лам может следовать друг за другом."]},
+{title:"Кролик",category:"Животные",image:"https://minecraft.wiki/images/EntitySprite_rabbit.png",desc:"Маленькое быстрое животное, встречающееся в разных биомах.",facts:["Кролики могут оставлять кроличью шкурку и мясо.","Некоторые варианты окраса связаны с биомом.","Остерегайся кролика-убийцы только в специальных условиях или командах — в обычной игре он не типичен."]},
+{title:"Попугай",category:"Животные",image:mobImg("Parrot.png"),desc:"Яркая птица джунглей, которую можно приручить семенами.",facts:["Попугаи садятся на плечо игрока.","Они имитируют звуки ближайших враждебных мобов.","Не корми попугаев печеньем: это опасно для них в игре."]},
+{title:"Панда",category:"Животные",image:"https://minecraft.wiki/images/EntitySprite_panda.png",desc:"Редкий житель джунглей с разными характерами и поведением.",facts:["Панды любят бамбук.","Их характеры и внешний вид могут отличаться.","Для размножения рядом должно быть достаточно бамбука."]},
+{title:"Летучая мышь",category:"Животные",image:mobImg("Bat.png"),desc:"Безобидный моб, который встречается в пещерах.",facts:["Летучие мыши не дают обычной добычи.","Они помогают создать ощущение живых пещер.","Не путай их с враждебными мобами."]},
+{title:"Снежный голем",category:"Мобы",image:"https://minecraft.wiki/images/EntitySprite_snow-golem.png",desc:"Создаваемый игроком голем, который бросает снежки во врагов.",facts:["Создаётся из двух снежных блоков и тыквы.","В жарких биомах может быстро получать урон.","Оставляет снежный след в подходящих условиях."]},
+{title:"Железный голем",category:"Мобы",image:mobImg("Iron_Golem.png"),desc:"Сильный защитник деревни, который атакует враждебных мобов.",facts:["Может естественно появляться в деревнях.","Игрок способен создать голема из железных блоков и вырезанной тыквы.","Не атакуй его без причины, если не готов к ответу."]},
+{title:"Слизень",category:"Мобы",image:mobImg("Slime.png"),desc:"Прыгающий враждебный моб, который разделяется на более мелких.",facts:["Размер зависит от места появления и условий.","Из маленьких слизней выпадают слизневые шарики.","Слизневые шарики нужны для липких поршней и поводков."]},
+{title:"Слизневый блок",category:"Блоки",image:blockImg("slime_block"),desc:"Пружинящий блок, который склеивает соседние подвижные блоки.",facts:["Позволяет строить необычные поршневые механизмы.","При падении может смягчать урон в зависимости от ситуации.","Не все блоки можно двигать вместе со слизневым блоком."]},
+{title:"Магмовый блок",category:"Блоки",image:blockImg("magma_block"),desc:"Горячий блок, встречающийся в Незере и под водой.",facts:["При стоянии сверху наносит урон, если не использовать подходящую защиту.","В воде создаёт нисходящие пузырьковые столбы.","Используется в некоторых фермах мобов."]},
+{title:"Морской фонарь",category:"Блоки",image:blockImg("sea_lantern"),desc:"Яркий источник света для подводных баз и современных построек.",facts:["Можно найти в океанических монументах.","Для добычи удобен инструмент с подходящим зачарованием.","Хорошо сочетается с призмарином и стеклом."]},
+{title:"Лазуритовая руда",category:"Руды",image:"https://minecraft.wiki/images/BlockSprite_lapis-lazuli-ore.png",desc:"Источник лазурита, необходимого для зачарования.",facts:["Лазурит используется в столе зачарований.","Руда встречается под землёй.","Собирай его по пути, когда исследуешь пещеры."]},
+{title:"Редстоун-лампа",category:"Редстоун",image:blockImg("redstone_lamp"),desc:"Лампа, которая загорается при подаче редстоун-сигнала.",facts:["Можно подключить к рычагу, кнопке или датчику.","Подходит для автоматического освещения комнат.","Несколько ламп можно объединить в систему освещения."]},
+{title:"Алмазная руда",category:"Руды",image:blockImg("diamond_ore"),desc:"Руда, из которой добывают алмазы.",facts:["В обычном мире встречается глубоко под землёй.","Каменная кирка или кирка лучше нужна для добычи.","Удача увеличивает количество выпадающих алмазов.","Шёлковое касание позволяет добыть сам блок руды.","Алмазы нужны для прочных инструментов и брони."]},
+{title:"Бамбук",category:"Растения",image:blockImg("bamboo"),desc:"Быстрорастущее растение джунглей.",facts:["Бамбук быстро растёт при подходящих условиях.","Его можно использовать как топливо.","Из него делают строительные блоки и бамбуковые доски.","Панды могут есть бамбук.","Бамбук удобно выращивать на автоматической ферме."]}
+];
+
+const categories = ["Все","Редстоун","Животные","Мобы","Блоки","Руды","Дерево","Растения","Биомы","Измерения","Структуры","Секреты","Советы"];
+let active = "Все";
+const grid = document.getElementById("grid");
+const search = document.getElementById("search");
+const filters = document.getElementById("filters");
+const empty = document.getElementById("empty");
+
+categories.forEach(cat=>{
+  const b=document.createElement("button");
+  b.className="filter"+(cat===active?" active":"");
+  b.textContent=cat;
+  b.addEventListener("click",()=>{
+    active=cat;
+    document.querySelectorAll(".filter").forEach(x=>x.classList.toggle("active",x.textContent===active));
+    render();
+  });
+  filters.appendChild(b);
+});
+
+function render(){
+  const q=search.value.toLowerCase().trim();
+  const result=articles.filter(a=>(active==="Все"||a.category===active)&&
+    (a.title+" "+a.category+" "+a.desc+" "+a.facts.join(" ")).toLowerCase().includes(q));
+  grid.replaceChildren();
+  empty.style.display=result.length?"none":"block";
+  result.forEach(a=>{
+    const card=document.createElement("article");
+    card.className="card";
+    const imgWrap=document.createElement("div"); imgWrap.className="card-img";
+    const img=document.createElement("img"); img.loading="lazy";setImage(img,a);
+    imgWrap.appendChild(img);
+    const body=document.createElement("div");body.className="card-body";
+    const pill=document.createElement("div");pill.className="pill";pill.textContent=a.category;
+    const title=document.createElement("h3");title.textContent=a.title;
+    const desc=document.createElement("p");desc.textContent=a.desc;
+    body.append(pill,title,desc);card.append(imgWrap,body);
+    card.addEventListener("click",()=>openArticle(a));
+    grid.appendChild(card);
+  });
+}
+search.addEventListener("input",render);
+
+const modal=document.getElementById("modal");
+function openArticle(a){
+  setImage(document.getElementById("modalImg"),a);
+  document.getElementById("modalCategory").textContent=a.category;
+  document.getElementById("modalTitle").textContent=a.title;
+  document.getElementById("modalDesc").textContent=a.desc;
+  const ul=document.getElementById("modalFacts");ul.replaceChildren();
+  a.facts.forEach(f=>{const li=document.createElement("li");li.textContent=f;ul.appendChild(li);});
+  if(a.facts.length!==5){const li=document.createElement("li");li.textContent=`Подготовлено фактов: ${a.facts.length} из 5.`;li.style.opacity=".75";ul.appendChild(li);}
+  modal.classList.add("open");
+}
+function closeModal(){modal.classList.remove("open");}
+document.getElementById("closeModal").addEventListener("click",closeModal);
+modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+
+
+// Полный список блоков загружается из MediaWiki API с пагинацией, чтобы не хранить
+// сотни мегабайт текстур внутри HTML. Спрайты — из Minecraft Wiki.
+const allBlocksGrid=document.getElementById("allBlocksGrid");
+const blockSearch=document.getElementById("blockSearch");
+const blockCount=document.getElementById("blockCount");
+const blockStatus=document.getElementById("blockStatus");
+const blocksEmpty=document.getElementById("blocksEmpty");
+let allBlockPages=[];
+const russianBlockTitles=new Map();
+const blockSlug=t=>t.toLowerCase().replace(/[\'’]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const ruBlockNames={
+"air":"Воздух","stone":"Камень","granite":"Гранит","diorite":"Диорит","andesite":"Андезит","grass block":"Блок травы","dirt":"Земля","coarse dirt":"Каменистая земля","cobblestone":"Булыжник","oak planks":"Дубовые доски","spruce planks":"Еловые доски","birch planks":"Берёзовые доски","oak log":"Дубовое бревно","oak leaves":"Дубовая листва","sand":"Песок","red sand":"Красный песок","gravel":"Гравий","glass":"Стекло","bricks":"Кирпичи","bookshelf":"Книжная полка","crafting table":"Верстак","furnace":"Печь","chest":"Сундук","barrel":"Бочка","hopper":"Воронка","torch":"Факел","lantern":"Фонарь","glowstone":"Светокамень","sea lantern":"Морской фонарь","diamond block":"Алмазный блок","diamond ore":"Алмазная руда","deepslate diamond ore":"Глубинная алмазная руда","gold ore":"Золотая руда","iron ore":"Железная руда","coal ore":"Угольная руда","lapis lazuli ore":"Лазуритовая руда","redstone ore":"Редстоуновая руда","emerald ore":"Изумрудная руда","copper ore":"Медная руда","obsidian":"Обсидиан","bedrock":"Бедрок","netherrack":"Незерак","end stone":"Эндерняк","nether quartz ore":"Кварцевая руда Незера","redstone dust":"Редстоун-пыль","redstone repeater":"Повторитель","repeater":"Повторитель","redstone comparator":"Компаратор","comparator":"Компаратор","piston":"Поршень","sticky piston":"Липкий поршень","observer":"Наблюдатель","dispenser":"Раздатчик","dropper":"Выбрасыватель","lever":"Рычаг","stone button":"Каменная кнопка","oak door":"Дубовая дверь","ladder":"Лестница","scaffolding":"Строительные леса","bamboo":"Бамбук","bamboo block":"Блок бамбука","sugar cane":"Сахарный тростник","cactus":"Кактус","pumpkin":"Тыква","melon":"Арбуз","snow block":"Снежный блок","ice":"Лёд","packed ice":"Плотный лёд","blue ice":"Синий лёд","slime block":"Слизневый блок","magma block":"Магмовый блок","tnt":"Динамит","beacon":"Маяк","enchanting table":"Чародейский стол","brewing stand":"Зельеварка","anvil":"Наковальня","iron block":"Железный блок","gold block":"Золотой блок","emerald block":"Изумрудный блок","lapis lazuli block":"Лазуритовый блок","amethyst block":"Аметистовый блок"
+};
+function blockRussianName(title){return russianBlockTitles.get(title)||ruBlockNames[title.toLowerCase()]||title.replace(/_/g," ");}
+function blockSpriteUrl(title){const special={"Diamond Block":"diamond-block","Redstone Repeater":"redstone-repeater","Redstone Comparator":"redstone-comparator","Lapis Lazuli Ore":"lapis-lazuli-ore"};return `https://minecraft.wiki/images/BlockSprite_${special[title]||blockSlug(title)}.png`;}
+function renderAllBlocks(){
+  const q=blockSearch.value.trim().toLocaleLowerCase("ru-RU");
+  const shown=allBlockPages.filter(b=>(b.title+" "+blockRussianName(b.title)).toLocaleLowerCase("ru-RU").includes(q));
+  allBlocksGrid.replaceChildren();
+  blocksEmpty.style.display=shown.length?"none":"block";
+  blockCount.textContent=`${shown.length.toLocaleString("ru-RU")} из ${allBlockPages.length.toLocaleString("ru-RU")} блоков`;
+  const frag=document.createDocumentFragment();
+  shown.forEach(b=>{
+    const card=document.createElement("article");card.className="card";
+    const wrap=document.createElement("div");wrap.className="card-img";
+    const img=document.createElement("img");img.loading="lazy";img.alt=b.title;img.src=blockSpriteUrl(b.title);
+    img.onerror=()=>{img.onerror=null;img.src=fallbackImage(b.title,"Блоки");img.classList.add("fallback-img");};
+    wrap.appendChild(img);
+    const body=document.createElement("div");body.className="card-body";
+    const pill=document.createElement("div");pill.className="pill";pill.textContent="Блок Minecraft";
+    const title=document.createElement("h3");title.textContent=blockRussianName(b.title);
+    const desc=document.createElement("p");desc.textContent="Факты о блоке и его применении.";
+    body.append(pill,title,desc);card.append(wrap,body);
+    card.addEventListener("click",()=>openBlockFacts(b));
+    frag.appendChild(card);
+  });
+  allBlocksGrid.appendChild(frag);
+}
+
+const blockFactsRu={
+"diamond block":["Создаётся из девяти алмазов.","Можно разобрать обратно на девять алмазов.","Подходит для основания маяка.","Блок компактен для хранения алмазов.","Его можно добыть киркой с подходящим уровнем."] ,
+"redstone repeater":["Передаёт сигнал только вперёд.","Задержку можно изменить правым щелчком.","Усиливает редстоун-сигнал до полной силы.","Может блокировать обратную передачу сигнала.","Используется в таймерах и схемах."] ,
+"redstone comparator":["Сравнивает силу двух редстоун-сигналов.","Имеет режим сравнения и режим вычитания.","Может считывать заполненность контейнеров.","Работает с сигналами от сундуков и печей.","Используется в сортировщиках и логических схемах."] ,
+"bamboo":["Быстро растёт при подходящих условиях.","Можно использовать как топливо.","Из бамбука создают отдельный набор строительных блоков.","Панды любят бамбук.","Бамбук подходит для автоматических ферм."]
+};
+function openBlockFacts(b){
+ const facts=blockFactsRu[b.title.toLowerCase()]||[];
+ const a={title:blockRussianName(b.title),category:"Блоки",image:blockSpriteUrl(b.title),desc:"Справка по блоку Minecraft.",facts};
+ if(facts.length){openArticle(a);return;}
+ const modal=document.getElementById("modal");
+ setImage(document.getElementById("modalImg"),a);
+ document.getElementById("modalCategory").textContent="Блоки";
+ document.getElementById("modalTitle").textContent=a.title;
+ document.getElementById("modalDesc").textContent="Пока удалось подготовить 0 проверенных фактов для этой карточки.";
+ const ul=document.getElementById("modalFacts");ul.replaceChildren();
+ const li=document.createElement("li");li.textContent="Фактов: 0. Для этого блока пока нет подготовленных фактов в локальной энциклопедии.";ul.appendChild(li);
+ modal.classList.add("open");
+}
+
+blockSearch.addEventListener("input",renderAllBlocks);
+async function loadAllBlocks(){
+  const api="https://minecraft.wiki/api.php";
+  let continuation=null;
+  const seen=new Set();
+  try{
+    blockStatus.textContent="Загружаем список блоков с Minecraft Wiki…";
+    // Recursively collect block-category pages and subcategories. API pagination
+    // keeps the list complete instead of stopping at the first page.
+    const queue=["Category:Blocks","Category:Block items"];
+    const visitedCats=new Set();
+    while(queue.length && visitedCats.size<100){
+      const category=queue.shift();
+      if(visitedCats.has(category))continue;
+      visitedCats.add(category);
+      let cont=null;
+      do{
+        const params=new URLSearchParams({action:"query",list:"categorymembers",cmtitle:category,cmlimit:"500",format:"json",origin:"*"});
+        if(cont)params.set("cmcontinue",cont);
+        const response=await fetch(api+"?"+params.toString());
+        if(!response.ok)throw new Error("Wiki API unavailable");
+        const data=await response.json();
+        for(const item of (data.query?.categorymembers||[])){
+          if(item.ns===14){if(!visitedCats.has(item.title))queue.push(item.title);}
+          else if(item.ns===0 && !/^(List of|Minecraft Wiki:|Template:)/i.test(item.title))seen.add(item.title);
+        }
+        cont=data.continue?.cmcontinue||null;
+      }while(cont);
+    }
+    allBlockPages=[...seen].map(title=>({title})).sort((a,b)=>a.title.localeCompare(b.title));
+    if(!allBlockPages.length)throw new Error("No block pages returned");
+    // Pull Russian interlanguage titles in batches so the full catalog is searchable in Russian.
+    for(let i=0;i<allBlockPages.length;i+=40){
+      const batch=allBlockPages.slice(i,i+40).map(b=>b.title);
+      const lp=new URLSearchParams({action:"query",prop:"langlinks",titles:batch.join("|"),lllang:"ru",lllimit:"max",format:"json",origin:"*"});
+      try{
+        const lr=await fetch(api+"?"+lp.toString());
+        if(lr.ok){const ld=await lr.json();for(const page of Object.values(ld.query?.pages||{})){const ru=page.langlinks?.[0]?.["*"]||page.langlinks?.[0]?.title;if(page.title&&ru)russianBlockTitles.set(page.title,ru);}}
+      }catch(_){/* keep the built-in Russian dictionary as a fallback */}
+    }
+    blockStatus.textContent="Полный список блоков загружен. Поиск понимает русские названия и оригинальные английские названия; карточки открывают справку без перехода на Wiki.";
+    renderAllBlocks();
+  }catch(err){
+    blockStatus.textContent="Не удалось загрузить полный список (возможно, сеть или Wiki временно недоступны). Попробуй обновить страницу с интернетом. Основная энциклопедия выше продолжает работать.";
+    blockCount.textContent="Каталог недоступен";
+    allBlocksGrid.replaceChildren();
+    blocksEmpty.style.display="block";
+  }
+}
+
+// Боссы: изображения берём с Minecraft Wiki; для сломанных ссылок используется fallback.
+const bossData=[
+ {name:"Дракон Края",desc:"Главный босс измерения Край.",wiki:"Ender Dragon",img:"Ender_Dragon.png",facts:["Живёт на центральном острове Края.","Кристаллы Края восстанавливают его здоровье.","При взлёте может отбрасывать игрока.","После победы открывает выходной портал.","Повторное появление возможно с помощью кристаллов Края."]},
+ {name:"Иссушитель",desc:"Призываемый босс, который стреляет черепами.",wiki:"Wither",img:"Wither.png",facts:["Призывается из песка душ или почвы душ и трёх черепов скелета-иссушителя.","Взрывается при появлении.","Стреляет взрывными черепами.","В Java Edition половина здоровья включает фазу с защитой от стрел.","После победы выпадает звезда Незера."]},
+ {name:"Варден",desc:"Опасный моб глубоких тёмных пещер.",wiki:"Warden",img:"Warden.png",facts:["Появляется при срабатывании скалк-крикунов в нужных условиях.","Ориентируется на вибрации и запах.","Его дальняя атака проходит сквозь многие преграды.","Очень опасен даже для хорошо экипированного игрока.","Его можно избегать, двигаясь осторожно и отвлекая звуком."]},
+ {name:"Эндермен",desc:"Нейтральный моб, реагирующий на прямой взгляд.",wiki:"Enderman",img:"Enderman.png",facts:["Телепортируется на короткие расстояния.","Становится враждебным, если игрок смотрит ему в лицо.","Не любит воду и получает от неё урон.","Может поднимать некоторые блоки.","С него может выпасть жемчуг Края."]},
+ {name:"Древний страж",desc:"Сильный обитатель океанского монумента.",wiki:"Elder Guardian",img:"Elder_Guardian.png",facts:["Встречается в океанском монументе.","Накладывает усталость от добычи.","Имеет дальнюю атаку шипами.","В мире обычно существует три древних стража в монументе.","После победы может выпасть сырая треска, призмариновые материалы и мокрая губка."]},
+ {name:"Поборник",desc:"Разбойник с топором, встречающийся в рейдах и лесных особняках.",wiki:"Vindicator",img:"Vindicator.png",facts:["Это разновидность илладжера.","Атакует игрока железным топором.","Появляется в лесных особняках и во время рейдов.","В Java Edition может открыть дверь на пути к цели.","Победа над ним во время рейда помогает продвинуть волну."]}
+];
+const bossGrid=document.getElementById("bossGrid");
+if(bossGrid)bossData.forEach(b=>{
+ const card=document.createElement("article");card.className="card";
+ const media=document.createElement("div");media.className="card-img";
+ const img=document.createElement("img");img.loading="lazy";img.alt=b.name;
+ img.src=`https://minecraft.wiki/images/EntitySprite_${b.wiki.toLowerCase().replace(/ /g,"-")}.png`;
+ img.onerror=()=>{img.onerror=null;img.src=fallbackImage(b.name,"Мобы и боссы");};
+ media.appendChild(img);
+ const body=document.createElement("div");body.className="card-body";
+ const pill=document.createElement("div");pill.className="pill";pill.textContent="Моб / босс";
+ const h=document.createElement("h3");h.textContent=b.name;
+ const p=document.createElement("p");p.textContent=b.desc;
+ body.append(pill,h,p);card.append(media,body);
+ card.addEventListener("click",()=>openArticle({title:b.name,category:"Мобы / боссы",image:img.src,desc:b.desc,facts:b.facts||[]}));
+ bossGrid.appendChild(card);
+});
+
+const quizPlay=document.getElementById("quizPlay");let quizNow=[],quizPos=0,quizScore=0;
+function startTopicQuiz(topic){
+ quizNow=[...quizBank[topic]].sort(()=>Math.random()-.5);quizPos=0;quizScore=0;
+ quizPlay.style.display="block";quizPlay.scrollIntoView({behavior:"smooth",block:"start"});showTopicQuestion();
+}
+function showTopicQuestion(){
+ const item=quizNow[quizPos];quizPlay.replaceChildren();
+ const heading=document.createElement("h3");heading.textContent=`Вопрос ${quizPos+1} из ${quizNow.length}`;
+ const question=document.createElement("p");question.textContent=item.q;question.style.fontWeight="700";
+ const opts=document.createElement("div");opts.className="grid";
+ item.a.forEach((label,i)=>{const btn=document.createElement("button");btn.className="btn";btn.textContent=label;btn.style.textAlign="left";btn.addEventListener("click",()=>{
+  [...opts.querySelectorAll("button")].forEach(b=>b.disabled=true);
+  const ok=i===item.c;if(ok)quizScore++;
+  const result=document.createElement("p");result.textContent=(ok?"✅ Верно! ":"❌ Не совсем. ")+item.e;result.style.marginTop="14px";quizPlay.appendChild(result);
+  const next=document.createElement("button");next.className="btn";next.textContent=quizPos===quizNow.length-1?"Показать результат":"Следующий вопрос";
+  next.addEventListener("click",()=>{quizPos++;if(quizPos<quizNow.length)showTopicQuestion();else showTopicResult();});quizPlay.appendChild(next);
+ });opts.appendChild(btn);});
+ quizPlay.append(heading,question,opts);
+}
+function showTopicResult(){
+ quizPlay.replaceChildren();const h=document.createElement("h3");h.textContent="Тест завершён!";
+ const p=document.createElement("p");p.textContent=`Результат: ${quizScore} из ${quizNow.length}.`;
+ const again=document.createElement("button");again.className="btn";again.textContent="Пройти ещё раз";again.addEventListener("click",()=>{quizPos=0;quizScore=0;showTopicQuestion();});
+ quizPlay.append(h,p,again);
+}
+document.querySelectorAll("[data-start-quiz]").forEach(btn=>btn.addEventListener("click",()=>{window.location.href=`test.html?topic=${encodeURIComponent(btn.dataset.startQuiz)}`;}));
+
+loadAllBlocks();
+render();
+</script>
+</body>
+</html>
