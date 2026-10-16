@@ -503,3 +503,106 @@ render();
 </script>
 </body>
 </html>
+
+<script>
+(() => {
+  let audio;
+  let enabled = localStorage.getItem("craftpedia-sound") !== "off";
+
+  function playSound(type = "click") {
+    if (!enabled) return;
+
+    try {
+      audio ??= new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+
+      const now = audio.currentTime;
+      const osc = audio.createOscillator();
+      const gain = audio.createGain();
+
+      const sounds = {
+        click: [650, 420, 0.055],
+        open: [440, 720, 0.12],
+        close: [520, 300, 0.10],
+        success: [600, 900, 0.16]
+      };
+
+      const [start, end, duration] = sounds[type] || sounds.click;
+
+      osc.type = "square";
+      osc.frequency.setValueAtTime(start, now);
+      osc.frequency.exponentialRampToValueAtTime(end, now + duration);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.045, now + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+      osc.connect(gain);
+      gain.connect(audio.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.01);
+    } catch (error) {
+      console.warn("Craftpedia: звук недоступен", error);
+    }
+  }
+
+  function addSoundButton() {
+    if (document.getElementById("craftpedia-sound-toggle")) return;
+
+    const button = document.createElement("button");
+    button.id = "craftpedia-sound-toggle";
+    button.type = "button";
+    button.textContent = enabled ? "🔊 Звук: ВКЛ" : "🔇 Звук: ВЫКЛ";
+    button.setAttribute("aria-pressed", String(enabled));
+
+    Object.assign(button.style, {
+      position: "fixed",
+      right: "18px",
+      bottom: "18px",
+      zIndex: "99999",
+      padding: "11px 15px",
+      border: "2px solid #5b8c46",
+      borderRadius: "8px",
+      background: "#263b24",
+      color: "#fff",
+      fontWeight: "bold",
+      fontSize: "14px",
+      cursor: "pointer",
+      boxShadow: "0 4px 12px #0006"
+    });
+
+    button.addEventListener("click", () => {
+      enabled = !enabled;
+      localStorage.setItem("craftpedia-sound", enabled ? "on" : "off");
+      button.textContent = enabled ? "🔊 Звук: ВКЛ" : "🔇 Звук: ВЫКЛ";
+      button.setAttribute("aria-pressed", String(enabled));
+
+      if (enabled) playSound("success");
+    });
+
+    document.body.appendChild(button);
+  }
+
+  document.addEventListener("click", event => {
+    if (!enabled) return;
+
+    const target = event.target.closest(
+      "button, a, .card, .block-card, .mob-card, [role='button']"
+    );
+
+    if (!target || target.id === "craftpedia-sound-toggle") return;
+
+    if (target.matches("a")) {
+      playSound("open");
+    } else {
+      playSound("click");
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", addSoundButton);
+  } else {
+    addSoundButton();
+  }
+})();
+</script>
