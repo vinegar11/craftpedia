@@ -321,7 +321,36 @@ const ruBlockNames={
 "air":"Воздух","stone":"Камень","granite":"Гранит","diorite":"Диорит","andesite":"Андезит","grass block":"Блок травы","dirt":"Земля","coarse dirt":"Каменистая земля","cobblestone":"Булыжник","oak planks":"Дубовые доски","spruce planks":"Еловые доски","birch planks":"Берёзовые доски","oak log":"Дубовое бревно","oak leaves":"Дубовая листва","sand":"Песок","red sand":"Красный песок","gravel":"Гравий","glass":"Стекло","bricks":"Кирпичи","bookshelf":"Книжная полка","crafting table":"Верстак","furnace":"Печь","chest":"Сундук","barrel":"Бочка","hopper":"Воронка","torch":"Факел","lantern":"Фонарь","glowstone":"Светокамень","sea lantern":"Морской фонарь","diamond block":"Алмазный блок","diamond ore":"Алмазная руда","deepslate diamond ore":"Глубинная алмазная руда","gold ore":"Золотая руда","iron ore":"Железная руда","coal ore":"Угольная руда","lapis lazuli ore":"Лазуритовая руда","redstone ore":"Редстоуновая руда","emerald ore":"Изумрудная руда","copper ore":"Медная руда","obsidian":"Обсидиан","bedrock":"Бедрок","netherrack":"Незерак","end stone":"Эндерняк","nether quartz ore":"Кварцевая руда Незера","redstone dust":"Редстоун-пыль","redstone repeater":"Повторитель","repeater":"Повторитель","redstone comparator":"Компаратор","comparator":"Компаратор","piston":"Поршень","sticky piston":"Липкий поршень","observer":"Наблюдатель","dispenser":"Раздатчик","dropper":"Выбрасыватель","lever":"Рычаг","stone button":"Каменная кнопка","oak door":"Дубовая дверь","ladder":"Лестница","scaffolding":"Строительные леса","bamboo":"Бамбук","bamboo block":"Блок бамбука","sugar cane":"Сахарный тростник","cactus":"Кактус","pumpkin":"Тыква","melon":"Арбуз","snow block":"Снежный блок","ice":"Лёд","packed ice":"Плотный лёд","blue ice":"Синий лёд","slime block":"Слизневый блок","magma block":"Магмовый блок","tnt":"Динамит","beacon":"Маяк","enchanting table":"Чародейский стол","brewing stand":"Зельеварка","anvil":"Наковальня","iron block":"Железный блок","gold block":"Золотой блок","emerald block":"Изумрудный блок","lapis lazuli block":"Лазуритовый блок","amethyst block":"Аметистовый блок"
 };
 function blockRussianName(title){return russianBlockTitles.get(title)||ruBlockNames[title.toLowerCase()]||title.replace(/_/g," ");}
-function blockSpriteUrl(title){const special={"Diamond Block":"diamond-block","Redstone Repeater":"redstone-repeater","Redstone Comparator":"redstone-comparator","Lapis Lazuli Ore":"lapis-lazuli-ore"};return `https://minecraft.wiki/images/BlockSprite_${special[title]||blockSlug(title)}.png`;}
+function blockSpriteCandidates(title) {
+  const slug = blockSlug(title);
+  const key = title.toLowerCase().trim();
+
+  const aliases = {
+    "diamond block": ["diamond-block"],
+    "block of diamond": ["diamond-block"],
+    "gold block": ["gold-block"],
+    "block of gold": ["gold-block"],
+    "iron block": ["iron-block"],
+    "block of iron": ["iron-block"],
+    "emerald block": ["emerald-block"],
+    "block of emerald": ["emerald-block"],
+    "redstone block": ["redstone-block"],
+    "block of redstone": ["redstone-block"],
+    "coal block": ["coal-block"],
+    "block of coal": ["coal-block"],
+    "lapis lazuli block": ["lapis-block"],
+    "block of lapis lazuli": ["lapis-block"],
+    "lapis lazuli ore": ["lapis-lazuli-ore"],
+    "redstone repeater": ["redstone-repeater"],
+    "redstone comparator": ["redstone-comparator"]
+  };
+
+  const names = [...new Set([...(aliases[key] || []), slug])];
+
+  return names.map(name =>
+    `https://minecraft.wiki/images/BlockSprite_${name}.png`
+  );
+}
 function renderAllBlocks(){
   const q=blockSearch.value.trim().toLocaleLowerCase("ru-RU");
   const shown=allBlockPages.filter(b=>(b.title+" "+blockRussianName(b.title)).toLocaleLowerCase("ru-RU").includes(q));
